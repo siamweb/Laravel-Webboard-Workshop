@@ -13,6 +13,12 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+     <style>
+        .table-linkable > tbody > tr {
+            cursor: pointer;
+        }
+    </style>
+
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
