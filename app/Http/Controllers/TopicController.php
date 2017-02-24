@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use App\Comment;
 use App\Topic;
-
-
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 class TopicController extends Controller
 {
     /**
@@ -16,10 +14,9 @@ class TopicController extends Controller
      */
     public function index()
     {
-        $topics = Topic::all();
+        $topics = Topic::orderBy('created_at', 'desc')->get();
         return view('topic.index')->withTopics($topics);
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -27,9 +24,11 @@ class TopicController extends Controller
      */
     public function create()
     {
-        //
+        if (Auth::guest()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        return view('topic.create');
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -38,9 +37,14 @@ class TopicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (Auth::guest()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        $topic = new Topic($request->all());
+        $topic->user()->associate(Auth::user());
+        $topic->save();
+        return redirect()->action('TopicController@show', $topic->id);
     }
-
     /**
      * Display the specified resource.
      *
@@ -49,9 +53,28 @@ class TopicController extends Controller
      */
     public function show($id)
     {
-        //
+        $topic = Topic::findOrFail($id);
+        $comments = $topic->comments->sortBy('created_at');
+        return view('topic.show')->withTopic($topic)->withComments($comments);
     }
-
+    /**
+     * Store a newly created comment in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function comment($id, Request $request)
+    {
+        if (Auth::guest()) {
+            App::abort(403, 'Unauthorized action.');
+        }
+        $topic = Topic::findOrFail($id);
+        $comment = new Comment($request->all());
+        $comment->topic()->associate($topic);
+        $comment->user()->associate(Auth::user());
+        $comment->save();
+        return redirect()->action('TopicController@show', $topic->id);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -62,7 +85,6 @@ class TopicController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -74,7 +96,6 @@ class TopicController extends Controller
     {
         //
     }
-
     /**
      * Remove the specified resource from storage.
      *
