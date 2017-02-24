@@ -54,12 +54,14 @@ class TopicController extends Controller
     public function show($id)
     {
         $topic = Topic::findOrFail($id);
-        $comments = $topic->comments;
+        $comments = $topic->comments->sortBy('created_at');
         return view('topic.show')
             ->withTopic($topic)
             ->withComments($comments);
 
     }
+
+
     /**
      * Store a newly created comment in storage.
      *
