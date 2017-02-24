@@ -34,7 +34,7 @@
                             <tr onclick="document.location.href = '{{ action('TopicController@show', $topic->id) }}'">
                                 <td>{{ $topic->title }}</td>
                                 <td class="text-center">{{ $topic->user->name }}</td>
-                                <td class="text-center">{{ $topic->created_at }}</td>
+                                <td class="text-center">{{ $topic->created_at->diffForHumans() }}</td>
                             </tr>
                             @endforeach
                             </tbody>
