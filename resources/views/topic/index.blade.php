@@ -1,12 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Home</div>
-              <div class="panel-body">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+              @if (! Auth::guest()) 
+                    <div class="text-right">
+                        <a href="{{ action('TopicController@create') }}">
+                            <button type="button" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                New Topic
+                            </button>
+                        </a>
+                    </div>
+                    <br />
+                @endif
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Home
+                    </div>
+
+                    <div class="panel-body">
                         <table class="table table-striped table-linkable table-hover">
                             <thead>
                             <tr>
@@ -26,10 +40,8 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
